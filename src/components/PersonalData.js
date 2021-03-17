@@ -18,6 +18,7 @@ class PersonalData extends Component{
         }
 
         this.handleChange = this.handleChange.bind(this)
+        this.handleClick = this.handleClick.bind(this)
     }
 
     componentDidMount() {
@@ -35,6 +36,17 @@ class PersonalData extends Component{
 
         this.setState({
             [e.target.name]: e.target.value
+        })
+    }
+
+    handleClick(e){
+        e.preventDefault();
+        this.context.updateUserInfo(this.state).then(result => {
+            if (result){
+                alert("Zauktualizowano dane!");
+            }else {
+                alert("Aktualizacja nie powiodła się");
+            }
         })
     }
 
@@ -88,7 +100,7 @@ class PersonalData extends Component{
                             </>
                         </Accordion.Collapse>
                     </Accordion>
-                    <Button variant="primary" type="submit" disabled>
+                    <Button variant="primary" onClick={this.handleClick} type="submit">
                         Zapisz zmiany
                     </Button>
                 </Form>

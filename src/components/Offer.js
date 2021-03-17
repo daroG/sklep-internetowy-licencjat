@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import {NavLink, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {MyContext} from "../MyContext";
 import Row from "react-bootstrap/Row";
 import {Col} from "react-bootstrap";
@@ -87,7 +85,7 @@ function Offer() {
             </Row>
             <Row style={{'justify-content': 'center'}}>
                 {productsToDisplay().length > 0 ? productsToDisplay().map(product =>
-                    <ProductCard id={product.id} name={product.name} description={product.description} thumbnail={product.thumbnail} />
+                    <ProductCard id={product.id} name={product.name} description={product.description} thumbnail={product.thumbnail_url} />
                 ) : <Col><h3 className="py-5 text-center">Brak produktów w tej kategorii</h3></Col>}
             </Row>
         </Container>

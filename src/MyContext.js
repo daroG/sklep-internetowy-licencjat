@@ -1,17 +1,31 @@
-import React, { createContext, Component } from 'react';
+import React, {createContext, Component} from 'react';
 import axios from 'axios';
+import Helpers from "./Helpers";
+import {Logger} from "./utils/Logger";
 
 export const MyContext = createContext(null);
 
+
+const URL_PRODUCTS = 'products';
+const URL_LOGIN = 'auth/login';
+const URL_REGISTER = 'auth/register';
+const URL_USER_SIMPLE_INFO = 'auth/user';
+const URL_USER_INFO = 'auth/user/info';
+const URL_USER_INFO_SAVE = 'auth/user/info';
+const URL_LOGOUT = 'auth/logout';
+const URL_ORDERS_LIST = 'auth/user/orders';
+const URL_MAKE_ORDER = 'auth/user/orders';
+
 const Axios = axios.create({
-    baseURL: 'http://sklep-internetowy.loc/api.php/',
+    baseURL: 'http://sklep-web-service.loc/api/',
     headers: {
         'Content-type': 'application/json',
     }
 })
 
-class MyContextProvider extends Component{
-    constructor(props){
+
+class MyContextProvider extends Component {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -29,6 +43,7 @@ class MyContextProvider extends Component{
         this.logoutUser = this.logoutUser.bind(this);
         this.registerUser = this.registerUser.bind(this);
         this.getUserInfo = this.getUserInfo.bind(this);
+        this.updateUserInfo = this.updateUserInfo.bind(this);
 
         this.addProductToCart = this.addProductToCart.bind(this);
         this.removeProductFromCart = this.removeProductFromCart.bind(this);
@@ -40,16 +55,18 @@ class MyContextProvider extends Component{
         this.readCart = this.readCart.bind(this);
         this.clearCart = this.clearCart.bind(this);
 
-        this.makeTransaction = this.makeTransaction.bind(this);
+        this.makeOrder = this.makeOrder.bind(this);
 
     }
 
-    initializeAxios(){
+    initializeAxios() {
         const loginToken = localStorage.getItem('loginToken');
-        const loginTokenExpiredAt = localStorage.getItem('loginTokenExpiredAt');
+        const loginTokenExpiredAt = Date.parse(localStorage.getItem('loginTokenExpiredAt'));
 
-        if(loginToken && loginTokenExpiredAt && +loginTokenExpiredAt * 1000 > new Date().getTime()) {
-            Axios.defaults.headers.common['Authorization'] = `bearer ${loginToken}`;
+        if (loginToken && loginTokenExpiredAt && +loginTokenExpiredAt * 1000 > new Date().getTime()) {
+            Axios.defaults.headers.common['Authorization'] = `Bearer ${loginToken}`;
+            Axios.defaults.headers.common['X-Requested-With'] = `XMLHttpRequest`;
+
             return true;
         }
         return false;
@@ -58,7 +75,7 @@ class MyContextProvider extends Component{
     componentDidMount() {
         this.readCart();
         this.isLoggedIn().then(user => {
-            if(user) {
+            if (user) {
                 this.setState({
                     ...this.state,
                     showLogin: false,
@@ -69,10 +86,10 @@ class MyContextProvider extends Component{
         });
     }
 
-    readCart(){
+    readCart() {
         const savedCart = localStorage.getItem('cart');
 
-        if(savedCart){
+        if (savedCart) {
             try {
                 const cart = JSON.parse(savedCart);
 
@@ -80,26 +97,26 @@ class MyContextProvider extends Component{
                     ...this.state,
                     cart: cart
                 })
-            }catch(e){
-                console.warn(e.message);
+            } catch (e) {
+                Logger.warn(e.message);
             }
         }
     }
 
-    saveCart(){
+    saveCart() {
         localStorage.setItem('cart', JSON.stringify(this.state.cart));
     }
 
-    addProductToCart(product){
+    addProductToCart(product) {
         this.setState({
             ...this.state,
             cart: [...this.state.cart, product]
         }, () => this.saveCart())
 
-        console.log("Context", this.state);
+        Logger.info("Context", this.state);
     }
 
-    removeProductFromCart(product){
+    removeProductFromCart(product) {
         this.setState({
             ...this.state,
             cart: this.state.cart.filter(p => p !== product)
@@ -108,29 +125,36 @@ class MyContextProvider extends Component{
 
     }
 
-    clearCart(){
+    clearCart() {
         this.setState({
             ...this.state,
             cart: []
         }, () => this.saveCart())
     }
 
-    async isLoggedIn(){
+    async isLoggedIn() {
 
-        console.log("isLoggedIn called");
+        Logger.info("isLoggedIn called");
 
-        if(this.initializeAxios()){
+        if (this.initializeAxios()) {
 
-            const userData = await Axios.post("get_user_info");
-            console.log(userData.data)
-            if(userData && userData.data && userData.data.status && userData.data.status === 'OK' && userData.data.user){
-                return userData.data.user;
+            const userData = await Axios.get(URL_USER_SIMPLE_INFO).catch((error) => Logger.warn(error));
+            Logger.info('user info', userData.data)
+            if (userData && userData.data) {
+                return userData.data;
             }
         }
         return false;
     }
 
-    logoutUser(){
+    logoutUser() {
+
+        Axios.get(URL_LOGOUT).then().catch(error => {
+            if(error.response) {
+                Logger.info(error.response.data)
+            }
+        });
+
         localStorage.removeItem('loginToken');
         localStorage.removeItem('loginTokenExpiredAt');
         this.setState({
@@ -141,8 +165,8 @@ class MyContextProvider extends Component{
         })
     }
 
-    async registerUser(user){
-        const register = await Axios.post('register', {
+    async registerUser(user) {
+        const register = await Axios.post(URL_REGISTER, {
             email: user.email,
             name: user.name,
             surname: user.surname,
@@ -157,67 +181,94 @@ class MyContextProvider extends Component{
         return register.data;
     }
 
-    async loginUser({email, password}){
-        const login = await Axios.post('login', {
+    async loginUser({email, password}) {
+        const login = await Axios.post(URL_LOGIN, {
             email: email,
             password: password,
-        }, ).catch(() => {
-
+            remember_me: true
+        },).catch(() => {
             return {
                 status: "ERROR"
             }
         });
 
-        if(login && login.data && login.data.status === 'OK' && login.data.jwt && login.data.expire){
-            localStorage.setItem('loginToken', login.data.jwt);
-            localStorage.setItem('loginTokenExpiredAt', login.data.expire);
-
-            this.setState({
-                ...this.state,
-                showLogin: false,
-                isAuthenticated: true,
-                user: login.data.user,
-            });
+        if (!login || !login.data) {
+            return {
+                status: "ERROR"
+            }
         }
+
+        localStorage.setItem('loginToken', login.data.access_token);
+        localStorage.setItem('loginTokenExpiredAt', login.data.expires_at);
+
+        this.setState({
+            ...this.state,
+            showLogin: false,
+            isAuthenticated: true,
+        });
 
         await this.isLoggedIn();
 
         return login.data;
     }
 
-    async getUserInfo(){
-        const userInfo = await Axios.post('get_user_info', {
-            getAll: true
-        }).catch(err =>
-            console.log(err)
+    async getUserInfo() {
+        const userInfo = await Axios.get(URL_USER_INFO).catch(err =>
+            Logger.info(err)
         )
 
-        console.log("getUserInfo called", userInfo);
+        Logger.info("Full user info: ", userInfo.data);
 
-        if(userInfo && userInfo.data.status === 'OK' && userInfo.data.type === 'all'){
-            return userInfo.data.user;
+        if (!userInfo.data) {
+            return {};
         }
 
 
-        return {};
+        return userInfo.data;
     }
 
-    async getProduct(id){
+    async updateUserInfo(data){
 
-        let response = await Axios.post('get_product', {
-            id: id,
+        const userData = {
+            email: data.email,
+            name: data.name,
+            surname: data.surname,
+            phone: data.tel,
+            address: data.address,
+            city: data.city,
+            zipCode: data.zipCode
+        }
+
+        let toRet = true;
+        await Axios.post(URL_USER_INFO_SAVE, userData).catch(error => {
+            if(error.response){
+                Logger.error(error.response.data);
+                toRet = false;
+            }
         });
 
-        return response.data;
+        return toRet;
 
     }
-    async getProducts(){
 
-        let response = await Axios.get('get_products');
+    async getProduct(id) {
 
-        if(response.data){
+        let response = await Axios.get(`${URL_PRODUCTS}/${id}`);
+        Logger.info(response.data);
+
+        return Helpers.prepareProduct(response.data);
+
+    }
+
+    async getProducts() {
+
+        let response = await Axios.get(URL_PRODUCTS);
+
+        Logger.info(response.data);
+
+        if (response.data) {
             this.setState({
-                products: response.data
+                products: response.data.map(p => Helpers.prepareProduct(p))
             })
         }
 
@@ -225,27 +276,47 @@ class MyContextProvider extends Component{
 
     }
 
-    async makeTransaction(data){
-        let response = await Axios.post('make_transaction', {...data,
-        cart: this.state.cart});
+    async makeOrder(data) {
 
-        if(response.data){
-            console.log(response.data);
-        }else{
-            console.warn(response);
+        const requiredData = {
+            name: data.name,
+            surname: data.surname,
+            email: data.email,
+            phone: data.tel,
+            address: data.address,
+            city: data.city,
+            zipCode: data.zipCode,
         }
 
-        return response?.data;
+        const toSend = {
+            ...requiredData,
+            cart: JSON.stringify(this.state.cart)
+        }
+
+        Logger.info("To send", toSend);
+
+        let response = await Axios.post(URL_MAKE_ORDER, toSend).catch(error => Logger.info(error.response.data));
+
+
+
+        if(response.error) {
+            Logger.info(response);
+            return null;
+        }
+
+        Logger.info(response.data);
+
+        return response.data;
     }
 
-    async getTransactions(){
-        let response = await Axios.post('get_transaction_list', {});
+    async getTransactions() {
+        let response = await Axios.get(URL_ORDERS_LIST);
 
-        if(response.data){
-            console.log(response.data);
-        }else{
-            console.warn(response);
+        if (!response.data) {
+            return {};
         }
+
+        Logger.info(response.data);
 
         return response?.data;
     }
@@ -259,12 +330,13 @@ class MyContextProvider extends Component{
             registerUser: this.registerUser,
             isLoggedIn: this.isLoggedIn,
             getUserInfo: this.getUserInfo,
+            updateUserInfo: this.updateUserInfo,
             addProductToCart: this.addProductToCart,
             removeProductFromCart: this.removeProductFromCart,
             clearCart: this.clearCart,
             getProduct: this.getProduct,
             getProducts: this.getProducts,
-            makeTransaction: this.makeTransaction,
+            makeOrder: this.makeOrder,
             getTransactions: this.getTransactions,
         }
 
@@ -282,7 +354,7 @@ function withContext(Context, Component) {
     return props => {
         return (
             <Context.Consumer>
-                {context => <Component {...props} context={context} />}
+                {context => <Component {...props} context={context}/>}
             </Context.Consumer>
         );
     }

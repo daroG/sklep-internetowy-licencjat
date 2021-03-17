@@ -59,7 +59,7 @@ class Product extends Component {
                 this.setState({
                     ...this.state,
                     ...product
-                }, () => console.log(this.state, this.state.images))
+                }, () => console.log(product, this.state, this.state.images))
             });
         }else{
 
@@ -68,6 +68,8 @@ class Product extends Component {
                 ...p
             }, () => console.log("Jest już załadowany", this.state, typeof this.state.images))
         }
+
+        // setTimeout(() => log)
     }
 
     addToCard(product) {
@@ -106,8 +108,7 @@ class Product extends Component {
                         {images && images.length > 0 ? (
                         <Carousel>
                             {images.map(image => (<Carousel.Item>
-                                <img className="d-block w-100" src={image.src}
-                                     alt={image.alt}/>
+                                <img className="d-block w-100" src={image}/>
                             </Carousel.Item>))}
 
                         </Carousel>

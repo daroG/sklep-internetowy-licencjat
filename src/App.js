@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 
 import React from "react";
@@ -7,7 +6,8 @@ import ClientPanel from './components/ClientPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-    HashRouter,
+    // HashRouter,
+    BrowserRouter,
     Switch,
     Route
 } from "react-router-dom";
@@ -23,7 +23,7 @@ import Transaction from "./components/Transaction";
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
         <TopBar />
 
         <Switch>
@@ -50,7 +50,7 @@ function App() {
                 <HomePage/>
             </Route>
         </Switch>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

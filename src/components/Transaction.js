@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 
 function Transaction() {
 
-    const {getUserInfo, makeTransaction, clearCart} = useContext(MyContext);
+    const {getUserInfo, makeOrder, clearCart} = useContext(MyContext);
 
     const [state, setState] = useState({
         name: "",
@@ -60,8 +60,8 @@ function Transaction() {
                 error: false,
             })
 
-            makeTransaction(state).then(data => {
-                if(data && data.status === "OK"){
+            makeOrder(state).then(data => {
+                if(data){
                     clearCart();
                     setState({
                         ...state,

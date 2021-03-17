@@ -9,16 +9,16 @@ import {Tabs, Tab, Form, Button, Accordion, Col, Container, Row} from 'react-boo
 function ClientPanel() {
     const {getTransactions} = useContext(MyContext);
 
-    const [transactions, setTransactions] = useState({});
+    const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
         getTransactions().then(data => {
-            if(data.status === "OK"){
-                console.log(data.transactions);
-                setTransactions({
+            if(data !== {}){
+                console.log(data);
+                setTransactions([
                     ...transactions,
-                    ...data.transactions,
-                })
+                    ...data,
+                ])
             }
         })
     }, [])
@@ -33,8 +33,8 @@ function ClientPanel() {
             <Tabs defaultActiveKey="shopping-list" id="profileTabs">
                 <Tab eventKey="shopping-list" title="Moje zakupy">
                     <div className="mt-3">
-                        {Object.entries(transactions).map(([transactionId, item]) =>
-                            <OrderCard transactionId={transactionId} orders={item}/>
+                        {transactions.map((transaction) =>
+                            <OrderCard order={transaction}/>
                         )}
                     </div>
                 </Tab>
