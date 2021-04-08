@@ -11,10 +11,6 @@ function OrderCard({order}){
 
     const translateStatus = (status) => status == 1 ? "zamówiono" : status == 2 ? "w trakcie realizacji" : "dostarczono";
 
-
-    // console.log(order);
-    // return <div>Tu będą transakcje</div>
-
     const {created_at, id, status, name, surname, email, tel, address, city, zipCode, products_orders} = order;
 
     return (

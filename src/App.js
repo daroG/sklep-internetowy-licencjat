@@ -1,7 +1,7 @@
 import './App.css';
 
 import React from "react";
-import ClientPanel from './components/ClientPanel';
+import ClientPanel from './views/ClientPanel';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,15 +11,15 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import TopBar from "./components/TopBar";
-import HomePage from "./components/HomePage";
+import TopBar from "./components/Navigation/TopBar";
+import HomePage from "./views/HomePage";
 import Offer from "./components/Offer";
-import Product from "./components/Product";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Product from "./views/Product";
+import Login from "./views/Login";
+import Register from "./views/Register";
 import Cart from "./components/Cart/Cart";
 import PrivateRoute from "./components/PrivateRoute";
-import Transaction from "./components/Transaction";
+import Transaction from "./views/Transaction";
 
 function App() {
   return (

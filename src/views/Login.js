@@ -5,7 +5,7 @@ import {Redirect, Link, useLocation, useHistory} from 'react-router-dom';
 import {MyContext} from '../MyContext';
 import {Alert, Form, Row, Col, Button, Container} from "react-bootstrap";
 
-function LoginException({message, name,}){
+function LoginException({message, name}){
     this.message = message;
     this.name = name;
 }

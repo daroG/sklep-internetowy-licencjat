@@ -2,6 +2,7 @@ import React, {createContext, Component} from 'react';
 import axios from 'axios';
 import Helpers from "./Helpers";
 import {Logger} from "./utils/Logger";
+import User from "./models/User";
 
 export const MyContext = createContext(null);
 
@@ -45,6 +46,7 @@ class MyContextProvider extends Component {
         this.getUserInfo = this.getUserInfo.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
 
+        this.getCart = this.getCart.bind(this);
         this.addProductToCart = this.addProductToCart.bind(this);
         this.removeProductFromCart = this.removeProductFromCart.bind(this);
 
@@ -139,8 +141,8 @@ class MyContextProvider extends Component {
         if (this.initializeAxios()) {
 
             const userData = await Axios.get(URL_USER_SIMPLE_INFO).catch((error) => Logger.warn(error));
-            Logger.info('user info', userData.data)
             if (userData && userData.data) {
+                Logger.info('user info', userData.data)
                 return userData.data;
             }
         }
@@ -217,30 +219,21 @@ class MyContextProvider extends Component {
             Logger.info(err)
         )
 
-        Logger.info("Full user info: ", userInfo.data);
-
-        if (!userInfo.data) {
-            return {};
+        if (!userInfo || !userInfo.data) {
+            return null;
         }
 
+        Logger.info("Full user info: ", userInfo.data);
 
-        return userInfo.data;
+        return User.fromObject(userInfo.data);
     }
 
     async updateUserInfo(data){
 
-        const userData = {
-            email: data.email,
-            name: data.name,
-            surname: data.surname,
-            phone: data.tel,
-            address: data.address,
-            city: data.city,
-            zipCode: data.zipCode
-        }
+        const user = User.fromObject(data);
 
         let toRet = true;
-        await Axios.post(URL_USER_INFO_SAVE, userData).catch(error => {
+        await Axios.post(URL_USER_INFO_SAVE, user).catch(error => {
             if(error.response){
                 Logger.error(error.response.data);
                 toRet = false;
@@ -251,9 +244,16 @@ class MyContextProvider extends Component {
 
     }
 
+    getCart(){
+        return this.state.cart;
+    }
+
     async getProduct(id) {
 
         let response = await Axios.get(`${URL_PRODUCTS}/${id}`);
+        if(!response || !response.data){
+            return {};
+        }
         Logger.info(response.data);
 
         return Helpers.prepareProduct(response.data);
@@ -336,6 +336,7 @@ class MyContextProvider extends Component {
             clearCart: this.clearCart,
             getProduct: this.getProduct,
             getProducts: this.getProducts,
+            getCart: this.getCart,
             makeOrder: this.makeOrder,
             getTransactions: this.getTransactions,
         }
