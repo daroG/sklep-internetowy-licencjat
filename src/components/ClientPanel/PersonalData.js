@@ -1,20 +1,23 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {MyContext} from "../../MyContext";
+import {MyContext} from "../../Context";
 import UserDataForm from "./UserDataForm";
 import {Row, Spinner, Col, UncontrolledAlert} from "reactstrap";
 
-function PersonalData(){
+function PersonalData() {
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const {getUserInfo, updateUserInfo} = useContext(MyContext);
     const [savingStatus, setSavingStatus] = useState(0);
+    const {getUserInfo, updateUserInfo} = useContext(MyContext);
 
-    useEffect( async () => {
-        const user = await getUserInfo();
-        if (user) {
-            setUser(user);
-        }
-        setIsLoading(false);
+    useEffect(() => {
+        getUserInfo().then(user => {
+            if (user) {
+                setUser(user);
+            }
+            setIsLoading(false);
+        }).catch(() =>
+            setIsLoading(false)
+        );
     }, []);
 
     const handleSubmit = (data) => {
@@ -31,7 +34,7 @@ function PersonalData(){
         <Col className="mt-4">
             {savingStatus === 1 ? <UncontrolledAlert color="success">
                 Zaktualizowano dane użytkownika
-            </UncontrolledAlert> : savingStatus === 2 ?<UncontrolledAlert color="danger">
+            </UncontrolledAlert> : savingStatus === 2 ? <UncontrolledAlert color="danger">
                 Aktualizacja danych nie powiodła się
             </UncontrolledAlert> : null}
             <UserDataForm user={user} onSubmit={handleSubmit}/>

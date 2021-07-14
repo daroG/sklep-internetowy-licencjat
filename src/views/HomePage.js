@@ -1,30 +1,27 @@
 import React from 'react';
-import {Container, Col, Row, Carousel} from "react-bootstrap";
-import Jumbotron from "react-bootstrap/Jumbotron";
-import Button from "react-bootstrap/Button";
+import {Container, Col, Row, Jumbotron, Button, UncontrolledCarousel} from "reactstrap";
 import {NavLink} from "react-router-dom";
 
+const images = [
+    {
+        src: 'http://sklep-internetowy.loc/public/images/1.png',
+        alt: '',
+    },
+    {
+        src: 'http://sklep-internetowy.loc/public/images/2.png',
+        alt: '',
+    },
+    {
+        src: 'http://sklep-internetowy.loc/public/images/3.jpg',
+        alt: '',
+    },
+    {
+        src: 'http://sklep-internetowy.loc/public/images/4.jpg',
+        alt: '',
+    },
+]
 
-function HomePage(props) {
-
-    const images = [
-        {
-            src: 'http://sklep-internetowy.loc/public/images/1.png',
-            alt: '',
-        },
-        {
-            src: 'http://sklep-internetowy.loc/public/images/2.png',
-            alt: '',
-        },
-        {
-            src: 'http://sklep-internetowy.loc/public/images/3.jpg',
-            alt: '',
-        },
-        {
-            src: 'http://sklep-internetowy.loc/public/images/4.jpg',
-            alt: '',
-        },
-    ]
+function HomePage() {
 
     return (
         <Container fluid="xl">
@@ -38,12 +35,10 @@ function HomePage(props) {
                             </p>
                         <p>W ofercie znajdują się <strong>makramy, łapacze snów, ozdoby na lustra, biżuteriaz, serwetki, ozdoby na donice oraz innego rodzaju wyroby.</strong></p>
                         <p>Nasze produkty doskonale sprawdzają się jako prezenty, każdy z nich może zostać zmodyfikowny na życzenie klienta.</p>
-
-
                         <p>
-                            <NavLink to="/oferta">
-                                <Button variant="outline-primary" size="lg">
-                                    Poznaj ofertę
+                            <NavLink to="/oferta/wszystkie">
+                                <Button color="outline-primary" size="lg">
+                                    Poznaj naszą ofertę
                                 </Button>
                             </NavLink>
                         </p>
@@ -51,15 +46,19 @@ function HomePage(props) {
                 </Col>
             </Row>
 
-            <Row>
-                <Col xl={{span: 6, offset: 3}}>
-                    <Carousel>
-                        {images.map(image => (<Carousel.Item>
-                            <img className="d-block w-100" src={image.src}
-                                 alt={image.alt}/>
-                        </Carousel.Item>))}
+            <Row className="pb-5">
+                <Col xs="12" className="mb-3">
+                    <h4>A oto nasze przykładowe produkty:</h4>
+                    <hr/>
+                </Col>
+                <Col xs="12">
+                    <UncontrolledCarousel items={images}/>
+                </Col>
+            </Row>
 
-                    </Carousel>
+            <Row className="bg-dark text-white py-5">
+                <Col>
+                    <p className="text-center">Jest to stona internetowa stworzona na potrzeby pracy licencjackiej.</p>
                 </Col>
             </Row>
         </Container>

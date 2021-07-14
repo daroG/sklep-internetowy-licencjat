@@ -9,6 +9,18 @@ class Helpers{
             thumbnail: product.thumbnail_url,
         }
     }
+
+    static prepareCategory(category){
+        return {
+            id: category.id,
+            name: category.name,
+            description: category.description
+        }
+    }
+
+    static displayAsPrice(price){
+        return (Math.round(price) / 100).toFixed(2);
+    }
 }
 
 export default Helpers;

@@ -1,11 +1,10 @@
 import React, {useContext, useState} from 'react';
-import {Form, Container} from 'react-bootstrap';
-import Button from "react-bootstrap/Button";
-import {MyContext} from "../MyContext";
-import Alert from "react-bootstrap/Alert";
+import {Label, Input, Form, FormGroup, Container, Button, Alert} from 'reactstrap';
+import {MyContext} from "../Context";
+import {Logger} from "../utils/Logger";
 
 function Register(){
-    const {rootState, registerUser} = useContext(MyContext);
+    const {registerUser} = useContext(MyContext);
     const defaultState = {
         user: {
             name: "",
@@ -24,11 +23,12 @@ function Register(){
     const [state, setState] = useState(defaultState);
 
     const onChange = (e) => {
+
         setState({
             ...state,
             user: {
                 ...state.user,
-                [e.target.name]: e.target.value,
+                [e.target.name.replace('first_name', 'name').replace('last_name', 'surname')]: e.target.value,
             }
         })
     }
@@ -66,18 +66,17 @@ function Register(){
 
         if(canProcess)
             registerUser(user).then(data => {
-                console.log(data);
-                if (data.errors.length > 0) {
-                    setState({
-                        ...state,
-                        errors: data.errors
-                    })
-                }else if(data.status === "OK"){
-                    setState({
-                        ...state,
-                        success: true
-                    })
-                }
+                Logger.info(data);
+                setState({
+                    ...state,
+                    success: true
+                })
+            }).catch(err => {
+                Logger.error(err);
+                setState({
+                    ...state,
+                    errors: err.response.data.errors
+                })
             })
 
     }
@@ -86,50 +85,50 @@ function Register(){
     return (
         <Container>
             <h1>Aby się zarejestrować, podaj dane do swojego konta:</h1>
-            {state.success ? <Alert variant={"success"}>Poprawnie zarejestrowano użytkownika</Alert> : null}
-            {state.errors.length > 0 ? <Alert variant={"warning"}>
+            {state.success ? <Alert color={"success"}>Poprawnie zarejestrowano użytkownika</Alert> : null}
+            {state.errors.length > 0 ? <Alert color={"warning"}>
                 <ul>
                     {state.errors.map(error => <li key={error}>{error}</li>)}
                 </ul>
                 </Alert> : null}
             <Form>
-                <Form.Group controlId="name">
-                    <Form.Label>Imię</Form.Label>
-                    <Form.Control value={state.user.name} name="name" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="surname">
-                    <Form.Label>Nazwisko</Form.Label>
-                    <Form.Control value={state.user.surname} name="surname" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" value={state.user.email} name="email" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="password">
-                    <Form.Label>Hasło</Form.Label>
-                    <Form.Control value={state.user.password} name="password" type="password" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="passwordConfirm">
-                    <Form.Label>Powtórz hasło</Form.Label>
-                    <Form.Control value={state.user.passwordConfirm} name="passwordConfirm" type="password" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="tel">
-                    <Form.Label>Numer telefonu</Form.Label>
-                    <Form.Control type="tel" value={state.user.tel} name="tel" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="address">
-                    <Form.Label>Adres</Form.Label>
-                    <Form.Control value={state.user.address} name="address" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="city">
-                    <Form.Label>Miasto</Form.Label>
-                    <Form.Control value={state.user.city} name="city" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="zipCode">
-                    <Form.Label>Kod pocztowy</Form.Label>
-                    <Form.Control value={state.user.zipCode} name="zipCode" onChange={onChange}/>
-                </Form.Group>
-                <Button onClick={formSubmit}>
+                <FormGroup>
+                    <Label for="first_name">Imię</Label>
+                    <Input id="first_name" value={state.user.name} name="first_name" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="surname">Nazwisko</Label>
+                    <Input id="surname" value={state.user.surname} name="last_name" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="email">Email</Label>
+                    <Input id="email" type="email" value={state.user.email} name="email" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="password">Hasło</Label>
+                    <Input id="password" value={state.user.password} name="password" type="password" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="passwordConfirm">Powtórz hasło</Label>
+                    <Input id="passwordConfirm" value={state.user.passwordConfirm} name="passwordConfirm" type="password" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="tel">Numer telefonu</Label>
+                    <Input id="tel" type="tel" value={state.user.tel} name="tel" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="address">Adres</Label>
+                    <Input id="address" value={state.user.address} name="address" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="city">Miasto</Label>
+                    <Input id="city" value={state.user.city} name="city" onChange={onChange}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="zipCode">Kod pocztowy</Label>
+                    <Input id="zipCode" value={state.user.zipCode} name="zipCode" onChange={onChange}/>
+                </FormGroup>
+                <Button onClick={formSubmit} color="primary">
                     Zarejestruj się
                 </Button>
             </Form>

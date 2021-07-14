@@ -14,16 +14,21 @@ import {
     UncontrolledCarousel
 } from "reactstrap";
 import {Link} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import Helpers from "../../Helpers";
 
 function Layout({id, name, price, count, description, images, decrementCount, incrementCount, handleAddToCartClick, prepositions, cart}) {
 
-    const carouselItems = images.map((image, index) => {
-        return {
-            src: image,
-            key: index
-        }
-    });
+    const [carouselItems, setCarouselItems] = useState([]);
+
+    useEffect(() => {
+        setCarouselItems(images.map((image, index) => {
+            return {
+                src: image,
+                key: index
+            }
+        }));
+    }, [images])
 
     return (
         <Container fluid="xl">
@@ -34,12 +39,12 @@ function Layout({id, name, price, count, description, images, decrementCount, in
             </Row>
             <Row>
                 <Col className="mr-4 mb-4" md="6">
-                    {images && images.length > 0 ? (<UncontrolledCarousel items={carouselItems} />) : <p>Brak zdjęcia poglądowego</p>}
+                    {carouselItems && carouselItems.length > 0 ? (<UncontrolledCarousel items={carouselItems}/>) : <p>Brak zdjęcia poglądowego</p>}
                 </Col>
                 <Col className="ml-4">
                     <Row className="mb-5">
                         <Col>
-                            <Badge pill color="success" style={{fontSize: "2rem"}}>{price / 100.0}zł</Badge>
+                            <Badge pill color="success" style={{fontSize: "2rem"}}>{Helpers.displayAsPrice(price)}zł</Badge>
                         </Col>
                     </Row>
                     <Row className="mb-5">

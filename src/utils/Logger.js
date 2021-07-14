@@ -5,7 +5,11 @@ export class Logger{
     }
 
     static warn(...args){
-        console.warn(...args);
+        console.warn((new Date()).toLocaleString(), ...args);
+    }
+
+    static error(...args){
+        console.error((new Date()).toLocaleString(), ...args);
     }
 
 }

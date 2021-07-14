@@ -1,5 +1,5 @@
 export default class User{
-    constructor(name, surname, email, phone, address, city, zipCode) {
+    constructor(name, surname, email, phone, address, city, zipCode,) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -14,6 +14,6 @@ export default class User{
             return prevValue && current in userObject
         }, true);
 
-        return canCreateNewUser ? new User(userObject.name, userObject.surname, userObject.email, userObject.phone, userObject.address, userObject.city, userObject.zipCode,) : null;
+        return canCreateNewUser ? new User(userObject.name, userObject.surname, userObject.email, userObject.phone, userObject.address, userObject.city, userObject.zipCode, ) : null;
     }
 }

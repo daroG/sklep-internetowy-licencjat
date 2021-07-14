@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {MyContext} from "../MyContext";
+import {MyContext} from "../Context";
 import {Redirect, Route} from "react-router-dom";
 
 

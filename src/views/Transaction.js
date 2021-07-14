@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState} from 'react';
-import {MyContext} from "../MyContext";
-import {Alert, Container, Row, Col, Form} from "react-bootstrap";
-import Button from "react-bootstrap/Button";
+import {MyContext} from "../Context";
+import {Alert, Container, Row, Col, Form, Button, FormGroup, Input, Label} from "reactstrap";
 import {Link} from "react-router-dom";
 
 function Transaction() {
@@ -79,8 +78,8 @@ function Transaction() {
                 <Col>
                     <h1>Finalizacja zamówienia</h1>
                     <hr/>
-                    <Alert variant="success">
-                        <Alert.Heading>Zamówienie zostało przyjęte do realizacji</Alert.Heading>
+                    <Alert color="success">
+                        <h4 className="alert-heading">Zamówienie zostało przyjęte do realizacji</h4>
                         <p>Dziękujemy za zakupy w naszym sklepie.</p>
                         <Link to="/"><Button variant="outline-success">Powrót na stronę główną</Button></Link>
                     </Alert>
@@ -96,36 +95,36 @@ function Transaction() {
                     <h3>Podaj dane do zamówienia</h3>
                 </Col>
             </Row>
-            {state.error ? <Alert variant="warning">Należy wypełnić wszystkie pola formularza</Alert> : null }
+            {state.error ? (<Alert color="warning">Należy wypełnić wszystkie pola formularza</Alert>) : null }
             <Form>
-                <Form.Group controlId="name">
-                    <Form.Label>Imię</Form.Label>
-                    <Form.Control value={state.name} name="name" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="surname">
-                    <Form.Label>Nazwisko</Form.Label>
-                    <Form.Control value={state.surname} name="surname" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" value={state.email} name="email" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="tel">
-                    <Form.Label>Numer telefonu</Form.Label>
-                    <Form.Control type="tel" value={state.tel} name="tel" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="address">
-                    <Form.Label>Adres</Form.Label>
-                    <Form.Control value={state.address} name="address" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="city">
-                    <Form.Label>Miasto</Form.Label>
-                    <Form.Control value={state.city} name="city" onChange={onChange}/>
-                </Form.Group>
-                <Form.Group controlId="zipCode">
-                    <Form.Label>Kod pocztowy</Form.Label>
-                    <Form.Control value={state.zipCode} name="zipCode" onChange={onChange}/>
-                </Form.Group>
+                <FormGroup>
+                    <Label for="name">Imię</Label>
+                    <Input value={state.name} name="name" onChange={onChange} id="name"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="surname">Nazwisko</Label>
+                    <Input value={state.surname} name="surname" onChange={onChange} id="surname"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="email">Email</Label>
+                    <Input type="email" value={state.email} name="email" onChange={onChange} id="email"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="tel">Numer telefonu</Label>
+                    <Input type="tel" value={state.tel} name="tel" onChange={onChange} id="tel"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="address">Adres</Label>
+                    <Input value={state.address} name="address" onChange={onChange} id="address"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="city">Miasto</Label>
+                    <Input value={state.city} name="city" onChange={onChange} id="city"/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="zipCode">Kod pocztowy</Label>
+                    <Input value={state.zipCode} name="zipCode" onChange={onChange} id="zipCode"/>
+                </FormGroup>
                 <Button variant="outline-success" block onClick={formSubmit}>
                     Potwierdź zamówienie
                 </Button>

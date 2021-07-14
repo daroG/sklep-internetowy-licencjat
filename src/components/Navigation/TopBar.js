@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {Link, NavLink, useHistory} from "react-router-dom";
-import {MyContext} from "../../MyContext";
+import {MyContext} from "../../Context";
 import CartOnBar from "../Cart/CartOnBar";
 import {
     Container,
@@ -13,14 +13,10 @@ import {
     Nav,
     NavItem,
     DropdownMenu,
-    DropdownItem,
-    Form,
-    InputGroup,
-    Input,
-    Button,
-    InputGroupAddon
+    DropdownItem
 } from "reactstrap";
 import SearchForm from "./SearchForm";
+import categories from "../../utils/Categories";
 function TopBar() {
 
     const history = useHistory();
@@ -34,34 +30,6 @@ function TopBar() {
         logoutUser();
         history.push("/");
     }
-
-    let categories = [
-        {
-            name: "wszystkie",
-            id: 0
-        },
-        {
-            name: "makramy",
-            id: 1
-        }, {
-            name: "łapacze snów",
-            id: 2
-        }, {
-            name: "ozdoby na lustro",
-            id: 3
-        }, {
-            name: "biżuteria",
-            id: 4
-        }, {
-            name: "serwetki",
-            id: 5
-        }, {
-            name: "ozdoby na donice",
-            id: 6
-        }, {
-            name: "inne wyroby",
-            id: 7
-        }]
 
     return (
         <Container fluid>
@@ -79,11 +47,8 @@ function TopBar() {
                             </DropdownToggle>
                             <DropdownMenu>
                                 {categories.map(category =>
-                                    <DropdownItem>
-                                        <Link className="dropdown-item" to={{
-                                            pathname: "/oferta",
-                                            state: {category: category.id}
-                                        }}>
+                                    <DropdownItem key={category.id}>
+                                        <Link className="dropdown-item" to={`/oferta/${category.slug}`}>
                                             {category.name}
                                         </Link>
                                     </DropdownItem>
@@ -96,6 +61,13 @@ function TopBar() {
                                 <NavItem>
                                     <NavLink className="nav-link" to="/panel-klienta">Panel klienta</NavLink>
                                 </NavItem>
+                                {rootState.isAdmin ? (
+                                    <>
+                                        <NavItem>
+                                            <NavLink className="nav-link" to="/admin">Panel administracyjny</NavLink>
+                                        </NavItem>
+                                    </>
+                                ) : null}
                                 <NavItem>
                                     <button className="nav-link btn btn-outline-warning" onClick={logout}>Wyloguj się
                                     </button>

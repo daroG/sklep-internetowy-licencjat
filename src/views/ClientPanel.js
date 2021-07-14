@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 
 import PersonalData from '../components/ClientPanel/PersonalData';
-import {MyContext} from '../MyContext';
+import {MyContext} from '../Context';
 
 import  {Row, Col, Container} from 'reactstrap';
 import TransactionList from "../components/ClientPanel/TransactionList";
@@ -11,6 +11,7 @@ function ClientPanel() {
     const {getTransactions} = useContext(MyContext);
 
     const [transactions, setTransactions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         getTransactions().then(data => {
@@ -21,6 +22,7 @@ function ClientPanel() {
                     ...data,
                 ])
             }
+            setIsLoading(false);
         })
     }, [])
 
@@ -32,7 +34,7 @@ function ClientPanel() {
                 </Col>
             </Row>
             <Tabs tabs={[
-                {name: 'Dotychczasowe transakcje', component: <TransactionList transactions={transactions}/>},
+                {name: 'Dotychczasowe zakupy', component: <TransactionList transactions={transactions} isLoading={isLoading}/>},
                 {name: 'Dane użytkownika', component: <PersonalData/>}
             ]}/>
         </Container>

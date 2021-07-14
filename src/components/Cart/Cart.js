@@ -1,7 +1,8 @@
 import React, {useContext} from 'react';
-import {MyContext} from "../../MyContext";
-import {Row, Col, Alert, Container, Badge, Button, Image} from "react-bootstrap";
+import {MyContext} from "../../Context";
+import {Row, Col, Alert, Container, Button} from "reactstrap";
 import {Link} from "react-router-dom";
+import TrashIcon from "./TrashIcon";
 
 function Cart() {
     const {rootState, removeProductFromCart} = useContext(MyContext);
@@ -14,7 +15,7 @@ function Cart() {
     }, 0) / 100.0;
 
 
-    if(cart.length === 0) {
+    if (cart.length === 0) {
         return <Container>
             <Row>
                 <Col>
@@ -33,25 +34,23 @@ function Cart() {
                         <Col>
                             <Row>
                                 <Col>
-                                <h3><Link
-                                    to={"/produkt/" + cartItem.id}>{cartItem.name}</Link><Badge>[{cartItem.count}]</Badge>
-                                </h3>
+                                    <h3><Link
+                                        to={"/produkt/" + cartItem.id}>{cartItem.name}</Link>
+                                    </h3>
+                                    <h6>Liczba sztuk: {cartItem.count}</h6>
                                 </Col>
                                 <Col>
                                     <span>{cartItem.price / 100.0 * cartItem.count}zł</span>
-                                <Button variant="danger" className="ml-2"
-                                        onClick={removeProductFromCart.bind(null, cartItem)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                         fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
-                                        <path
-                                            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                    </svg>
-                                </Button>
+                                    <Button color="danger" className="ml-2"
+                                            onClick={() => removeProductFromCart(cartItem)}>
+                                        <TrashIcon/>
+                                    </Button>
                                 </Col>
                             </Row>
                             <Row>
                                 <Col lg={3}>
-                                    <Image src={cartItem.thumbnail} alt={`Zdjęcie ${cartItem.name}`} style={{"max-width": "200px"}}/>
+                                    <img src={cartItem.thumbnail} alt={`Zdjęcie ${cartItem.name}`}
+                                         style={{"max-width": "200px"}}/>
                                 </Col>
                                 <Col md={8} xl={10}>
                                     {cartItem.description}
@@ -60,19 +59,21 @@ function Cart() {
                         </Col>
                     </Row>
                 )}
-                <Row>
+                <Row className="mt-5">
                     <Col>
-                        <h5>Podsumowanie</h5>
+                        <h3>Podsumowanie</h3>
                         <hr/>
-                        {cart.map(cartItem => <Row>
-                            <span>{cartItem.count}</span> * <span>{cartItem.price/ 100.0}zł</span> = <span>{cartItem.price * cartItem.count / 100.0}zł</span>
+                        {cart.map(cartItem => <Row key={cartItem.id}>
+                            <span>{cartItem.count}</span> * <span>{cartItem.price / 100.0}zł</span> = <span>{cartItem.price * cartItem.count / 100.0}zł</span>
                         </Row>)}
 
                         <Row>
-                            <p><strong>Razem: </strong>{sum}zł</p>
+                            <h4><strong>Razem: </strong>{sum}zł</h4>
                         </Row>
                         <Row>
-                            <Link to="/transakcja"><Button variant="outline-primary" block>Do kasy</Button></Link>
+                            <Col>
+                                <Link to="/transakcja" className="d-block"><Button outline color="primary" className="w-100">Do kasy</Button></Link>
+                            </Col>
                         </Row>
                     </Col>
                 </Row>

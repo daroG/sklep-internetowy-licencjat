@@ -17,9 +17,9 @@ export default function Tabs({tabs}){
         <>
             <Nav tabs>
                 {tabs.map((tab, index) => (
-                    <NavItem>
+                    <NavItem key={index}>
                         <NavLink
-                            className={classnames({ active: activeTab === (index+1).toString() })}
+                            className={classnames({ active: activeTab === (index+1).toString() }, 'cursor-pointer')}
                             onClick={() => { toggleTab((index+1).toString()); }}
                         >
                             {tab.name}
@@ -29,8 +29,10 @@ export default function Tabs({tabs}){
             </Nav>
             <TabContent activeTab={activeTab}>
                 {tabs.map((tab, index) =>
-                    <TabPane tabId={(index+1).toString()}>
-                        {tab.component}
+                    <TabPane tabId={(index+1).toString()} key={index}>
+                        <div className="mt-3">
+                            {tab.component}
+                        </div>
                     </TabPane>
                 )}
             </TabContent>
