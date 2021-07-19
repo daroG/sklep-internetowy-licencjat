@@ -95,7 +95,7 @@ function Layout({id, name, price, count, description, images, decrementCount, in
                                 <Card>
                                     <CardImg top src={prep.src}/>
                                     <CardBody className="p-1">
-                                        <CardText><Link to={prep.url}>{prep.name}</Link></CardText>
+                                        <CardText><Link to={"/produkt/" + prep.id}>{prep.name}</Link></CardText>
                                     </CardBody>
                                 </Card>
                             </Col>

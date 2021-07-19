@@ -38,7 +38,7 @@ export default function ProductList(){
     const save = (product, files) => {
         saveProduct({
             ...product,
-            category_id: product.category,
+            category_id: product.category_id,
             files: files.map(file => file.serverId)
         }).then(obj => {
             if(obj.status === "Success") {

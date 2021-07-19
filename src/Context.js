@@ -165,7 +165,7 @@ class MyContextProvider extends Component {
 
             const userData = await Axios.get(URL_USER_SIMPLE_INFO).catch((error) => Logger.warn(error));
             if (userData && userData.data) {
-                Logger.info('user info', userData.data)
+                if(userData.data.role && userData.data.role.role === 1){this.setState({...this.state, isAdmin: true})}
                 return userData.data;
             }
         }
@@ -186,7 +186,7 @@ class MyContextProvider extends Component {
             ...this.state,
             isAuthenticated: false,
             user: null,
-            showLogin: true,
+            showLogin: true, isAdmin: false
         })
     }
 
@@ -220,7 +220,7 @@ class MyContextProvider extends Component {
             return {
                 status: STATUS_ERROR
             }
-        });
+        });  Logger.info("login attempt", login);
 
         if (!login || !login.data) {
             return {
@@ -231,10 +231,10 @@ class MyContextProvider extends Component {
         localStorage.setItem('loginToken', login.data.access_token);
         localStorage.setItem('loginTokenExpiredAt', login.data.expires_at);
 
-        this.setState({
+        await this.setState({
             ...this.state,
             showLogin: false,
-            isAuthenticated: true,
+            isAuthenticated: true, isAdmin: false
         });
 
         await this.isLoggedIn();
@@ -250,7 +250,6 @@ class MyContextProvider extends Component {
         if (!userInfo || !userInfo.data) {
             return null;
         }
-
         return User.fromObject(userInfo.data);
     }
 
